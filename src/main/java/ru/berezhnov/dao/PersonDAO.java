@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.berezhnov.models.Person;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +20,9 @@ public class PersonDAO {
     }
 
     public List<Person> index() {
-        return jdbcTemplate.query("SELECT * FROM person", new BeanPropertyRowMapper<>(Person.class));
+        List<Person> result = jdbcTemplate.query("SELECT * FROM person", new BeanPropertyRowMapper<>(Person.class));
+        result.sort(Comparator.comparingInt(Person::getId));
+        return result;
     }
 
     public Person show(int id) {
