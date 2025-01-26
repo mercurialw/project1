@@ -6,12 +6,11 @@
 </head>
 <body>
 <div th:each="book : ${books}">
-    <a th:href="@{/books/{id}(id=${person.getId()})}"
+    <a th:href="@{/books/{id}(id=${book.getId()})}"
        th:text="${book.getTitle() + ', ' + book.getAuthor() + ', ' + book.getYear()}">user</a>
 </div>
-<div th:if="${#}"></div>
-
+<br/>
 <hr/>
-<a href="/people/new">Добавить человека</a>
+<a href="/books/new">Добавить человека</a>
 </body>
 </html>

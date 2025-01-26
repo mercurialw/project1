@@ -18,19 +18,20 @@ public class Book {
     @Size(min = 10, max = 100, message = "Full name should be between 10 and 100 characters")
     private String author;
 
-    @NotEmpty(message = "Year should not be empty")
     @Max(value = 2026, message = "Birth year shouldn't be above 2025")
     private int year;
 
-    private Optional<Integer> borrowerId;
+    private Integer borrowerId;
 
     public Book(int id, String title, String author, int year, Integer borrowerId) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.year = year;
-        this.borrowerId = Optional.of(borrowerId);
+        this.borrowerId = borrowerId;
     }
+
+    public Book() {}
 
     public int getId() {
         return id;
@@ -65,10 +66,10 @@ public class Book {
     }
 
     public Integer getBorrowerId() {
-        return borrowerId.get();
+        return borrowerId;
     }
 
-    public void setBorrowerId(int borrowerId) {
-        this.borrowerId = Optional.of(borrowerId);
+    public void setBorrowerId(Integer borrowerId) {
+        this.borrowerId = borrowerId;
     }
 }

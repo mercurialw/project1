@@ -5,10 +5,10 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.berezhnov.models.Book;
+import ru.berezhnov.models.Person;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class BookDAO {
@@ -20,20 +20,15 @@ public class BookDAO {
     }
 
     public List<Book> index() {
-        List<Book> result = jdbcTemplate.query("SELECT * FROM book", new BeanPropertyRowMapper<>(Person.class));
+        List<Book> result = jdbcTemplate.query("SELECT * FROM book", new BeanPropertyRowMapper<>(Book.class));
         result.sort(Comparator.comparingInt(Book::getId));
         return result;
     }
 
     public Book show(int id) {
-        return jdbcTemplate.query("SELECT * FROM book WHERE id=?", new Object[]{id}, new BeanPropertyRowMapper<>(Person.class))
+        return jdbcTemplate.query("SELECT * FROM book WHERE id=?", new Object[]{id}, new BeanPropertyRowMapper<>(Book.class))
                 .stream().findAny().orElse(null);
     }
-
-//    public Optional<Book> show(String name) {
-//        return jdbcTemplate.query("SELECT * FROM person WHERE fullname=?", new Object[]{name}, new BeanPropertyRowMapper<>(Person.class))
-//                .stream().findAny();
-//    }
 
     public void update(int id, Book updatedBook) {
         jdbcTemplate.update("UPDATE book SET title=?, author=?, year=?, borrower_id=? WHERE id=?", updatedBook.getTitle(),
@@ -47,5 +42,18 @@ public class BookDAO {
 
     public void delete(int id) {
         jdbcTemplate.update("DELETE FROM book WHERE id=?", id);
+    }
+
+    public Person getPersonByBookId(int bookId) {
+        return jdbcTemplate.query("SELECT * FROM person INNER JOIN book ON person.id=book.borrower_id WHERE book.id=?",
+                        new Object[]{bookId}, new BeanPropertyRowMapper<>(Person.class))
+                .stream().findAny().orElse(null);
+    }
+
+    public void giveBookToPerson(int bookId, int personId) {
+        jdbcTemplate.update("UPDATE book SET borrower_id=? WHERE id=?", personId, bookId);
+    }
+    public void takeBookFromPerson(int bookId) {
+        jdbcTemplate.update("UPDATE book SET borrower_id=null WHERE id=?", bookId);
     }
 }
