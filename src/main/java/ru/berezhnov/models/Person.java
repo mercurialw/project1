@@ -6,11 +6,11 @@ public class Person {
 
     private int id;
 
-    @Size(min = 10, max = 100, message = "Full name should be between 10 and 100 characters")
+    @Size(min = 2, max = 100, message = "Имя должно быть от 2 до 100 символов длиной")
+    @NotEmpty(message = "Имя не должно быть пустым")
     private String fullName;
 
-    @Max(value = 2025, message = "Birth year shouldn't be above 2024")
-    @Min(value = 1899, message = "Birth year shouldn't be under 1900")
+    @Min(value = 1900, message = "Год рождения должен быть больше, чем 1900")
     private int birthYear;
 
     public Person(int id, String fullName, int birthYear) {

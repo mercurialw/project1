@@ -32,17 +32,17 @@ public class PersonDAO {
     }
 
     public Optional<Person> show(String name) {
-        return jdbcTemplate.query("SELECT * FROM person WHERE fullname=?", new Object[]{name}, new BeanPropertyRowMapper<>(Person.class))
+        return jdbcTemplate.query("SELECT * FROM person WHERE full_name=?", new Object[]{name}, new BeanPropertyRowMapper<>(Person.class))
                 .stream().findAny();
     }
 
     public void update(int id, Person updatedPerson) {
-        jdbcTemplate.update("UPDATE person SET fullname=?, birthyear=? WHERE id=?", updatedPerson.getFullName(),
+        jdbcTemplate.update("UPDATE person SET full_name=?, birth_year=? WHERE id=?", updatedPerson.getFullName(),
                 updatedPerson.getBirthYear(), id);
     }
 
     public void save(Person person) {
-        jdbcTemplate.update("INSERT INTO person(fullname, birthyear) VALUES (?, ?) ", person.getFullName(), person.getBirthYear());
+        jdbcTemplate.update("INSERT INTO person(full_name, birth_year) VALUES (?, ?) ", person.getFullName(), person.getBirthYear());
     }
 
     public void delete(int id) {
@@ -50,7 +50,7 @@ public class PersonDAO {
     }
 
     public List<Book> getBooksByPersonId(int personId) {
-        return jdbcTemplate.query("SELECT * FROM book WHERE borrower_id=?",
+        return jdbcTemplate.query("SELECT * FROM book WHERE person_id=?",
                 new Object[]{personId}, new BeanPropertyRowMapper<>(Book.class));
     }
 }

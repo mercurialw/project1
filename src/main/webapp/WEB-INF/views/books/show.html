@@ -7,25 +7,23 @@
 <body>
 <p th:text="${book.title + ', ' + book.author + ', ' + book.year}">book info</p>
 
-<div th:if="${currentPerson == null}">
-  <form th:method="PATCH" th:action="@{/books/give}">
-    <p>Эта книга свободна. Кому назначить её?</p>
+<div th:if="${owner}">
+  <p th:text="${'Книга сейчас у: ' + owner.fullName}"></p>
+  <form th:method="PATCH" th:action="@{/books/{id}/take(id=${book.id})}">
+    <input type="submit" value="Освободить книгу">
+  </form>
+</div>
+
+<div th:if="${people}">
+  <p>Эта книга свободна. Кому назначить её?</p>
+  <form th:method="PATCH" th:action="@{/books/{id}/give(id=${book.id})}">
     <label for="person">Выберите человека:</label>
-    <select name="personId" id="person">
+    <select th:object="${person}" th:field="*{id}" id="person">
       <option th:each="person : ${people}" th:value="${person.id}"
               th:text="${person.fullName}">
       </option>
     </select>
-    <input type="hidden" name="bookId" th:value="${book.id}" />
     <input type="submit" value="Назначить книгу">
-  </form>
-</div>
-
-<div th:if="${currentPerson != null}">
-  <p th:text="${'Книга сейчас у: ' + currentPerson.fullName}"></p>
-  <form th:method="PATCH" th:action="@{/books/take}">
-    <input type="hidden" name="bookId" th:value="${book.id}" />
-    <input type="submit" value="Освободить книгу">
   </form>
 </div>
 

@@ -9,6 +9,8 @@ import ru.berezhnov.dao.PersonDAO;
 import ru.berezhnov.models.Book;
 import ru.berezhnov.models.Person;
 
+import java.util.Optional;
+
 @Controller
 @RequestMapping("/books")
 public class BookController {
@@ -52,23 +54,28 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public String showBook(@PathVariable("id") int id, Model model) {
+    public String showBook(@PathVariable("id") int id, Model model, @ModelAttribute("person") Person person) {
         model.addAttribute("book", bookDAO.show(id));
-        model.addAttribute("currentPerson", bookDAO.getPersonByBookId(id));
-        model.addAttribute("people", personDAO.index());
+
+        Optional<Person> owner =  bookDAO.getPersonByBookId(id);
+        if(owner.isPresent()) {
+            model.addAttribute("owner", owner.get());
+        } else {
+            model.addAttribute("people", personDAO.index());
+        }
         return "books/show";
     }
 
-    @PatchMapping("/give")
-    public String giveBook(@RequestParam("bookId") int bookId, @RequestParam("personId") int personId) {
-        bookDAO.giveBookToPerson(bookId, personId);
-        return "redirect:/books";
+    @PatchMapping("/{id}/give")
+    public String giveBook(@PathVariable("id") int bookId, @ModelAttribute("person") Person person) {
+        bookDAO.giveBookToPerson(bookId, person);
+        return "redirect:/books/" + bookId;
     }
 
-    @PatchMapping("/take")
-    public String takeBook(@RequestParam("bookId") int bookId) {
+    @PatchMapping("/{id}/take")
+    public String takeBook(@PathVariable("id") int bookId) {
         bookDAO.takeBookFromPerson(bookId);
-        return "redirect:/books";
+        return "redirect:/books/" + bookId;
     }
 
     @DeleteMapping("/{id}")
