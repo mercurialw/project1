@@ -1,8 +1,10 @@
 package ru.berezhnov.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.berezhnov.dao.BookDAO;
 import ru.berezhnov.dao.PersonDAO;
@@ -36,7 +38,10 @@ public class BookController {
     }
 
     @PostMapping()
-    public String save(@ModelAttribute("book") Book book) {
+    public String save(@ModelAttribute("book") @Valid Book book, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "books/new";
+        }
         bookDAO.save(book);
         return "redirect:/books";
     }
@@ -47,8 +52,13 @@ public class BookController {
         return "books/edit";
     }
 
+    /* TO-DO: change uncorrect validation in situation when edit book with empty fields -_- */
     @PatchMapping("/{id}")
-    public String updateBook(@ModelAttribute("book") Book book, @PathVariable("id") int id) {
+    public String updateBook(@ModelAttribute("book") @Valid Book book, @PathVariable("id") int id,
+                             BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "books/edit";
+        }
         bookDAO.update(id, book);
         return "redirect:/books";
     }
